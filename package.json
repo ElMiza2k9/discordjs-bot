@@ -1,0 +1,20 @@
+{
+  "name": "discordjs-bot",
+  "version": "1.0.0",
+  "description": "A Discord Bot",
+  "main": "src/index.ts",
+  "repository": "https://github.com/drgatoxd/discordjs-bot",
+  "author": "drgato <43690887+drgatoxd@users.noreply.github.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "discord.js": "^13.7.0",
+    "dotenv": "^16.0.1",
+    "mongoose": "^6.3.4",
+    "ts-node": "^10.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.35",
+    "typescript": "^4.6.4"
+  }
+}
