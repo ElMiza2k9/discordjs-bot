@@ -4,6 +4,7 @@ import { Client, Collection } from 'discord.js';
 import { options } from 'config';
 import { env } from 'process';
 import { connect } from 'mongoose';
+import { EventService } from 'services/listeners.service';
 
 export class BotClient extends Client<true> {
   public constructor() {
@@ -12,7 +13,8 @@ export class BotClient extends Client<true> {
 
   public commands = new Collection<string, CommandData>();
   public services = {
-    command: new CommandService(this)
+    command: new CommandService(this),
+    event: new EventService(this)
   };
 
   public async start(token: string = env.DISCORD_TOKEN) {
@@ -20,6 +22,7 @@ export class BotClient extends Client<true> {
     else throw new Error('No token provided in .env file.');
 
     await this.services.command.init();
+    await this.services.event.init();
     await super.login();
     await this.connectToMongoDB();
     return this.token || env.DISCORD_TOKEN;
