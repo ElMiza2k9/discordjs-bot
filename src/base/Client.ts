@@ -3,6 +3,7 @@ import { CommandService } from 'services/command.service';
 import { Client, Collection } from 'discord.js';
 import { options } from 'config';
 import { env } from 'process';
+import { connect } from 'mongoose';
 
 export class BotClient extends Client<true> {
   public constructor() {
@@ -20,6 +21,13 @@ export class BotClient extends Client<true> {
 
     await this.services.command.init();
     await super.login();
+    await this.connectToMongoDB();
     return this.token || env.DISCORD_TOKEN;
+  }
+
+  private async connectToMongoDB() {
+    await connect(env.MONGODB_URI)
+      .then(() => console.log('Conectado a MongoDB'))
+      .catch(console.error);
   }
 }
