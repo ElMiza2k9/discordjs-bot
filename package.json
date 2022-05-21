@@ -10,11 +10,20 @@
   "dependencies": {
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.1",
+    "glob": "^8.0.3",
     "mongoose": "^6.3.4",
     "ts-node": "^10.7.0"
   },
   "devDependencies": {
+    "@types/glob": "^7.2.0",
     "@types/node": "^17.0.35",
+    "tsconfig-paths": "^4.0.0",
     "typescript": "^4.6.4"
+  },
+  "imports": {
+    "#base/*": "./src/base/*",
+    "#handlers/*": "./src/handlers/*",
+    "#models/*": "./src/models/*",
+    "#config/*": "./src/config/*"
   }
 }
