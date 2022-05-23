@@ -22,6 +22,18 @@ export default class implements CommandData {
           type: 'USER'
         }
       ]
+    },
+    {
+      name: 'info',
+      description: 'Muestra información del usuario.',
+      type: 'SUB_COMMAND',
+      options: [
+        {
+          name: 'target',
+          description: 'El usuario del que se obtendrá el avatar.',
+          type: 'USER'
+        }
+      ]
     }
   ];
 
@@ -30,18 +42,19 @@ export default class implements CommandData {
     args,
     ephemeral
   }: CommandParams): Promise<void> {
-    const subcmd = args.getSubcommand();
+    type subcommands = 'avatar' | 'info';
+    const subcmd = args.getSubcommand() as subcommands;
     const target = {
-      user: args.getUser('user') || command.user,
+      user: args.getUser('target') || command.user,
       get member() {
         return this.user.id == command.user.id
           ? command.member
-          : args.getMember('user');
+          : args.getMember('target');
       }
     };
 
-    switch (subcmd) {
-      case 'avatar': {
+    const functions = {
+      async avatar() {
         const buttons = [
           new MessageButton({
             custom_id: 'avatar-global',
@@ -138,7 +151,12 @@ export default class implements CommandData {
             ]
           });
         });
+      },
+      async info() {
+        console.log('Method not implemented yet');
       }
-    }
+    };
+
+    await functions[subcmd]();
   }
 }
