@@ -1,2 +1,2 @@
 export { options } from './ClientOptions';
-export { emojis, messages } from './Strings';
+export { color, emojis, messages } from './Strings';
