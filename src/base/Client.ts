@@ -1,6 +1,11 @@
 import type { CommandData } from 'types/Command';
 import { CommandService } from 'services/command.service';
-import { Client, Collection } from 'discord.js';
+import {
+  Client,
+  Collection,
+  type TextChannel,
+  type VoiceChannel
+} from 'discord.js';
 import { options } from 'config';
 import { env } from 'process';
 import { connect } from 'mongoose';
@@ -11,6 +16,8 @@ export class BotClient extends Client<true> {
     super(options);
   }
 
+  public activeVoiceChannels = new Collection<string, VoiceChannel>();
+  public activeTextChannels = new Collection<string, TextChannel>();
   public commands = new Collection<string, CommandData>();
   public services = {
     command: new CommandService(this),

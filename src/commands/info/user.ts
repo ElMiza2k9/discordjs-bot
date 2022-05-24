@@ -1,11 +1,13 @@
 import {
-  ApplicationCommandOptionData,
+  type ApplicationCommandOptionData,
+  Formatters,
   MessageActionRow,
   MessageButton,
-  MessageEmbed
+  MessageEmbed,
+  type Role
 } from 'discord.js';
 import type { CommandData, CommandParams } from 'types/Command';
-import { color } from 'config';
+import { color, userFlags } from 'config';
 
 export default class implements CommandData {
   public readonly name: string = 'user';
@@ -45,7 +47,7 @@ export default class implements CommandData {
     type subcommands = 'avatar' | 'info';
     const subcmd = args.getSubcommand() as subcommands;
     const target = {
-      user: args.getUser('target') || command.user,
+      user: await (args.getUser('target') || command.user).fetch(true),
       get member() {
         return this.user.id == command.user.id
           ? command.member
@@ -153,7 +155,86 @@ export default class implements CommandData {
         });
       },
       async info() {
-        console.log('Method not implemented yet');
+        const flags = target.user.flags?.toArray().length
+          ? target.user.flags
+              ?.toArray()
+              .map(str => userFlags[str])
+              .join(' ')
+          : 'No tiene';
+
+        const roles: Role[] = target.member
+          ? target.member.roles.cache
+              .sort((a, b) => b.position - a.position)
+              .map(x => x)
+              .filter(x => x.id != command.guild.id)
+              .slice(0, 15)
+          : [];
+
+        const stringRoles =
+          target.member && roles.length
+            ? roles.map(x => x.toString()).join(',') +
+              (target.member.roles.cache.size > 15
+                ? `, y ${target.member.roles.cache.size - roles.length} más...`
+                : '')
+            : 'No tiene';
+
+        let descriptionArray = [
+          `**ID:** ${target.user.id}`,
+          `**Avatar:** [ver original](${target.user.displayAvatarURL({
+            dynamic: true,
+            format: target.user.avatar?.startsWith('a_') ? 'gif' : 'png',
+            size: 4096
+          })})`,
+          `**Fecha de unión:** ${Formatters.time(
+            ~~(+target.user.createdAt / 1000),
+            'R'
+          )}`,
+          `**Insignias**: ${flags}`
+        ];
+
+        if (target.member) {
+          descriptionArray.push(
+            '',
+            `**Apodo:** ${target.member.nickname || 'No tiene'}`,
+            `**Fecha de unión:** ${Formatters.time(
+              ~~(+target.member.joinedAt! / 1000),
+              'R'
+            )}`,
+            `**Mejora el servidor:** ${
+              target.member.premiumSince
+                ? Formatters.time(~~(+target.member.premiumSince / 1000))
+                : 'No'
+            }`,
+            `**Roles:** ${stringRoles}`
+          );
+        }
+
+        const description = descriptionArray.join('\n');
+
+        const embeds = [
+          new MessageEmbed({
+            color: target.user.accentColor || color,
+            author: {
+              name: `Información de ${target.user.tag}`,
+              icon_url: target.user.displayAvatarURL({ dynamic: true })
+            },
+            description,
+            thumbnail: {
+              url: target.member
+                ? target.member.displayAvatarURL({ dynamic: true })
+                : target.user.displayAvatarURL({ dynamic: true })
+            },
+            image: {
+              url:
+                target.user.bannerURL({ dynamic: true, size: 4096 }) ||
+                undefined
+            }
+          })
+        ];
+
+        return void (await command.reply({
+          embeds
+        }));
       }
     };
 
