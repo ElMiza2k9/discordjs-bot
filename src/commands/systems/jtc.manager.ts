@@ -9,6 +9,11 @@ export default class implements CommandData {
     'Configura los canales de voz temporales';
   public readonly options?: ApplicationCommandOptionData[] = [
     {
+      name: 'toggle',
+      description: 'Activa/desactiva los canales de voz temporales',
+      type: 'BOOLEAN'
+    },
+    {
       name: 'channel',
       description: 'El canal que se usará para crear canales de voz',
       type: 'CHANNEL',
@@ -37,7 +42,7 @@ export default class implements CommandData {
     }
   ];
 
-  public async callback({ command, ephemeral }: CommandParams) {
+  public async callback({ command, ephemeral, args }: CommandParams) {
     if (!command.memberPermissions.has('ADMINISTRATOR'))
       return command.reply({
         content: 'No tienes permisos para usar este comando.',
@@ -54,11 +59,16 @@ export default class implements CommandData {
       (await ServerModel.findOne({ _id: command.guild.id })) ||
       new ServerModel({ _id: command.guild.id });
 
-    const channel = command.options.getChannel('channel');
-    const parent = command.options.getChannel('parent');
-    const textChannels = command.options.getBoolean('text-channels');
-    const templateVoice = command.options.getString('template-voice');
-    const templateText = command.options.getString('template-text');
+    const toggle = args.getBoolean('toggle');
+    const channel = args.getChannel('channel');
+    const parent = args.getChannel('parent');
+    const textChannels = args.getBoolean('text-channels');
+    const templateVoice = args.getString('template-voice');
+    const templateText = args.getString('template-text');
+
+    if (typeof toggle == 'boolean') {
+      server.jtc.enabled = toggle;
+    }
 
     if (channel && channel.isVoice()) {
       server.jtc.channel = channel.id;
@@ -99,7 +109,9 @@ export default class implements CommandData {
       server.jtc.template = templateVoice;
     }
 
-    server.jtc.textChannel ??= textChannels || undefined;
+    if (textChannels && typeof textChannels == 'boolean')
+      server.jtc.textChannel = textChannels;
+
     await server.save();
 
     return void command.reply({
@@ -110,6 +122,10 @@ export default class implements CommandData {
             icon_url: command.guild.iconURL({ dynamic: true }) || undefined
           },
           fields: [
+            {
+              name: 'Sistema activo',
+              value: server.jtc.enabled ? 'Si' : 'No'
+            },
             {
               name: 'Canal de voz',
               value: server.jtc.channel

@@ -37,8 +37,8 @@
     "forceConsistentCasingInFileNames": true,
     "keyofStringsOnly": true,
     "experimentalDecorators": true,
-    "lib": ["es6"],
-    "target": "es6",
+    "lib": ["es2021"],
+    "target": "es2021",
     "skipLibCheck": true,
     "rootDir": "./src",
     "baseUrl": "./src"
