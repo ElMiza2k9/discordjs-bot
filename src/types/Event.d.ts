@@ -2,7 +2,7 @@ import type { ClientEvents } from 'discord.js';
 
 export interface EventData {
   name: keyof BotEvents;
-  once: boolean;
+  once?: boolean;
 
   callback: (...args: any[]) => void;
 }

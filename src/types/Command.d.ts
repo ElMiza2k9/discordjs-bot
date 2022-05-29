@@ -14,6 +14,7 @@ export type CommandParams = {
   command: CommandInteraction<'cached'>;
   args: CommandArgs;
   ephemeral: true;
+  err: string;
 };
 
 type CommandArgs = Omit<

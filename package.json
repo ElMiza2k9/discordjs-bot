@@ -17,6 +17,7 @@
     "glob": "8.0.3",
     "image-djs": "2.3.5",
     "mongoose": "6.3.4",
+    "node-fetch": "^2.6.7",
     "ts-node": "10.8.0"
   },
   "devDependencies": {

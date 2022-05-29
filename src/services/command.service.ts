@@ -1,5 +1,5 @@
 import type { BotClient } from 'base/Client';
-import { messages } from 'config';
+import { emojis, messages } from 'config';
 import type { CommandInteraction } from 'discord.js';
 import type { CommandData } from 'types/Command';
 import { sync as glob } from 'glob';
@@ -46,7 +46,8 @@ export class CommandService {
       client: this.client,
       command: cmd,
       args: cmd.options,
-      ephemeral
+      ephemeral,
+      err: emojis.error + ' '
     });
   }
 

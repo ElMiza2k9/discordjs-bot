@@ -49,7 +49,13 @@ export default class implements CommandData {
     }
   ];
 
-  public async callback({ client, command, ephemeral, args }: CommandParams) {
+  public async callback({
+    client,
+    command,
+    ephemeral,
+    args,
+    err
+  }: CommandParams) {
     if (!command.memberPermissions.has('ADMINISTRATOR'))
       return command.reply({
         content: 'No tienes permisos para usar este comando',
@@ -76,6 +82,7 @@ export default class implements CommandData {
       )
         return command.reply({
           content:
+            err +
             'No tengo permiso para enviar mensajes/embeds/archivos en el canal seleccionado',
           ephemeral
         });
@@ -87,7 +94,7 @@ export default class implements CommandData {
     if (template) {
       if (template.length > 500)
         return command.reply({
-          content: 'El template no puede tener más de 500 caracteres',
+          content: err + 'El template no puede tener más de 500 caracteres',
           ephemeral
         });
       data.welcomer.template = template;
@@ -100,9 +107,9 @@ export default class implements CommandData {
         .get(background, { responseType: 'arraybuffer' })
         .catch(() => null);
 
-      if (!res)
+      if (!res || !res.data)
         return command.reply({
-          content: 'No se pudo cargar la imagen de fondo',
+          content: err + 'No se pudo cargar la imagen de fondo',
           ephemeral
         });
 
@@ -115,6 +122,7 @@ export default class implements CommandData {
       )
         return command.reply({
           content:
+            err +
             'La imagen seleccionada no es válida (solo archivos jpg/png/jpeg)',
           ephemeral
         });
@@ -127,6 +135,7 @@ export default class implements CommandData {
       if (!Utilities.checkHexColor(color))
         return command.reply({
           content:
+            err +
             'El color seleccionado no es válido. Solo se permiten colores hexadecimales',
           ephemeral
         });

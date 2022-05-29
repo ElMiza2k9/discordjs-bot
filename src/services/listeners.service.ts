@@ -18,7 +18,7 @@ export class EventService {
       const event = new Event(this.client);
       const cb = (...args: any[]) => event.callback(...args);
 
-      this.client.on(event.name, cb);
+      this.client[event.once ? 'once' : 'on'](event.name, cb);
 
       const fileName = file.split('/').pop()!.split('.')[0];
       if (fileName) this.callbacks.set(fileName, { event: event.name, cb });

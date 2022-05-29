@@ -42,16 +42,16 @@ export default class implements CommandData {
     }
   ];
 
-  public async callback({ command, ephemeral, args }: CommandParams) {
+  public async callback({ command, ephemeral, args, err }: CommandParams) {
     if (!command.memberPermissions.has('ADMINISTRATOR'))
       return command.reply({
-        content: 'No tienes permisos para usar este comando.',
+        content: err + 'No tienes permisos para usar este comando.',
         ephemeral
       });
 
     if (!command.guild.me?.permissions.has('MANAGE_CHANNELS'))
       return command.reply({
-        content: 'No tengo permisos para gestionar canales.',
+        content: err + 'No tengo permisos para gestionar canales.',
         ephemeral
       });
 
@@ -94,7 +94,8 @@ export default class implements CommandData {
     if (templateText) {
       if (templateText.length > 20)
         return command.reply({
-          content: 'El template del canal de texto es demasiado largo (>20).',
+          content:
+            err + 'El template del canal de texto es demasiado largo (>20).',
           ephemeral
         });
       server.jtc.textTemplate = templateText;
@@ -103,7 +104,8 @@ export default class implements CommandData {
     if (templateVoice) {
       if (templateVoice.length > 20)
         return command.reply({
-          content: 'El template del canal de voz es demasiado largo (>20).',
+          content:
+            err + 'El template del canal de voz es demasiado largo (>20).',
           ephemeral
         });
       server.jtc.template = templateVoice;

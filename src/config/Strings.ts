@@ -1,4 +1,6 @@
-export const emojis = {};
+export const emojis = {
+  error: '`❌`'
+};
 
 export const messages = {
   commandNotFound: `No se ha encontrado el comando. Reporta el error`

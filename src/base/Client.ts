@@ -12,12 +12,16 @@ import { env } from 'process';
 import { connect } from 'mongoose';
 import { EventService } from 'services/listeners.service';
 import { ServerModel } from 'models/Server';
+import { Twitch } from 'base/Twitch';
+import { TikTok } from 'base/TikTok';
 
 export class BotClient extends Client<true> {
   public constructor() {
     super(options);
   }
 
+  public tiktok = new TikTok();
+  public twitch = new Twitch(env.TWITCH_ID, env.TWITCH_SECRET);
   public activeVoiceChannels = new Collection<string, VoiceChannel>();
   public activeTextChannels = new Collection<string, TextChannel>();
   public commands = new Collection<string, CommandData>();
@@ -32,6 +36,7 @@ export class BotClient extends Client<true> {
 
     console.log(`Intents activos: ${new Intents(options.intents).toArray()}`);
 
+    await this.twitch.getKey();
     await this.services.command.init();
     await this.services.event.init();
     await super.login();
